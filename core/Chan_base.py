@@ -83,46 +83,19 @@ class BottomFractal(Fractal):
 
 class Stroke:
     """缠论笔类：由相邻且独立的顶分型和底分型构成"""
-    def __init__(self, start_fractal, end_fractal, klines):
-        # 验证1：分型类型必须相反（顶-底或底-顶）
-        if start_fractal.fractal_type == end_fractal.fractal_type:
-            raise ValueError("笔的起始和结束分型类型必须相反")
-        
-        # 验证2：分型间无共用K线
-        start_k_times = [k.time for k in start_fractal.klines]
-        end_k_times = [k.time for k in end_fractal.klines]
-        if any(k_time in end_k_times for k_time in start_k_times):
-            raise ValueError("分型间存在共用K线，不符合笔的定义")
-        
-        # 验证3：分型间至少1根独立K线
-        if len(klines) - len(start_fractal.klines) - len(end_fractal.klines) < 1:
-            raise ValueError("分型间至少需1根独立K线")
-
+    def __init__(self, start_fractal, end_fractal):
         # 基础属性赋值
         self.start_fractal = start_fractal  # 起始分型
         self.end_fractal = end_fractal      # 结束分型
-        self.klines = klines                # 笔包含的所有K线
         self.direction = 'up' if isinstance(start_fractal, BottomFractal) else 'down'
         self.is_confirmed = False           # 是否被确认（外部逻辑更新）
-        self.high = max(k.high for k in self.klines)  # 笔的最高价
-        self.low = min(k.low for k in self.klines)    # 笔的最低价
 
     def confirm(self):
         """标记笔被后续K线确认（如出现反向分型）"""
         self.is_confirmed = True
 
-    @property
-    def amplitude(self):
-        """笔的振幅（价格波动范围）"""
-        return self.high - self.low
-
-    @property
-    def fractal_distance(self):
-        """分型间K线数量"""
-        return len(self.klines)
-
     def __repr__(self):
         status = "Confirmed" if self.is_confirmed else "Unconfirmed"
         start_time = datetime.fromtimestamp(self.start_fractal.time).strftime("%Y-%m-%d")
         end_time = datetime.fromtimestamp(self.end_fractal.time).strftime("%Y-%m-%d")
-        return f"<{status} {self.direction.upper()} Stroke | {start_time}~{end_time} | K线数={self.fractal_distance} | 振幅={self.amplitude:.2f}>"
+        return f"<{status} {self.direction.upper()} Stroke | {start_time}~{end_time}"

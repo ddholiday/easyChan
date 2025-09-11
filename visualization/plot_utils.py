@@ -122,25 +122,6 @@ def draw_strokes(ax, strokes):
         # 标注位置：笔的中间点，Y轴偏移振幅的5%（避免遮挡线条）
         mid_x = (start_x + end_x) / 2
         mid_y = (start_y + end_y) / 2
-        offset = stroke.amplitude * 0.05  # 偏移量（自适应振幅）
-        label_y = mid_y + offset if stroke.direction == 'up' else mid_y - offset
-
-        # 添加文本标注（带白色背景框，突出显示）
-        ax.text(
-            mid_x, label_y,
-            f'笔{i+1}\n{stroke.amplitude:.2f}',  # 内容：序号+振幅
-            fontsize=8,
-            ha='center',  # 水平居中
-            va='center',  # 垂直居中
-            color=color,
-            bbox=dict(
-                boxstyle='round,pad=0.3',  # 圆角矩形框（避免尖锐边缘）
-                facecolor='white',         # 白色背景（遮挡背景K线）
-                alpha=0.9,                 # 背景透明度
-                edgecolor='none'           # 无边框（更简洁）
-            ),
-            zorder=6  # 图层优先级（最高，避免被任何元素遮挡）
-        )
 
     # 添加笔的图例（若有笔则显示）
     ax.legend(loc='upper left', fontsize=10, framealpha=0.9)

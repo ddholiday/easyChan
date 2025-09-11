@@ -7,7 +7,8 @@ from utils import (
     detect_fractals,
     find_all_necessary_points,
     print_necessary_points,
-    identify_strokes
+    identify_strokes,
+    identify_strokes_from_necessary_points
 )
 from visualization.plot_utils import (
     create_kline_figure,
@@ -72,7 +73,7 @@ def print_necessary_points(points):
 def main():
     # -------------------------- 1. 配置参数 --------------------------
     DATA_PATH = "data/hs300_k_data_week.csv"  # 数据文件路径（根据实际情况修改）
-    TAKE_TAIL_N = 50  # 保留最后N条数据
+    TAKE_TAIL_N = 200  # 保留最后N条数据
 
     # -------------------------- 2. 数据加载与转换 --------------------------
     print("=" * 50)
@@ -105,11 +106,17 @@ def main():
     all_necessary_points = find_all_necessary_points(combined_klines, top_fractals, bottom_fractals)
     print_necessary_points(all_necessary_points)
 
+    strokes = identify_strokes_from_necessary_points(combined_klines, top_fractals, bottom_fractals, all_necessary_points[0]["fractal"], all_necessary_points[1]["fractal"])
+
+    print(strokes)
+
     # -------------------------- 6. 笔识别 --------------------------
     print("\n" + "=" * 50)
     print("5. 笔识别（基于必经点）")
     print("=" * 50)
-    identified_strokes = identify_strokes(combined_klines, top_fractals, bottom_fractals)
+    identified_strokes = identify_strokes(combined_klines,all_necessary_points, top_fractals, bottom_fractals)
+
+    print(identified_strokes)
 
     # -------------------------- 7. 可视化 --------------------------
     print("\n" + "=" * 50)
@@ -121,12 +128,13 @@ def main():
     # 绘制原始K线（上轴）
     plot_kline(ax1, kline_list, title="原始K线图（合并前）")
     mark_fractals(ax1, top_fractals, bottom_fractals)  # 标记分型
-    draw_strokes(ax1, identified_strokes)  # 绘制笔
 
     # 绘制合并后K线（下轴）
     plot_kline(ax2, combined_k_data, title="合并后K线图（处理包含关系）")
     mark_fractals(ax2, top_fractals, bottom_fractals)  # 标记分型
-    draw_strokes(ax2, identified_strokes)  # 绘制笔
+
+    draw_strokes(ax1, identified_strokes)
+    draw_strokes(ax2, identified_strokes)
 
     # 显示图像
     plt.tight_layout()  # 自动调整布局

@@ -115,7 +115,7 @@ def _recursive_back(segment, top_fractals, bottom_fractals, result_list, is_star
         # 起始为底分型：找段内最高顶分型
         if not top_fractals:
             return
-        potential_top = max(top_fractals, key=lambda x: (-x.price, -x.time))
+        potential_top = max(top_fractals, key=lambda x: x.price)
         segment_times = [k.data.time for k in segment]
 
         try:

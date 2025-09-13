@@ -57,10 +57,10 @@ def combine_kline(kline_list):
         list: 合并后的stCombineK对象列表
     """
     if len(kline_list) < 2:
-        return [stCombineK(k, i, i, i, False) for i, k in enumerate(kline_list)]
+        return [stCombineK(k, i, i, i, False, i) for i, k in enumerate(kline_list)]
 
     # 初始化合并容器
-    combs = [stCombineK(k, i, i, i, False) for i, k in enumerate(kline_list)]
+    combs = [stCombineK(k, i, i, i, False, i) for i, k in enumerate(kline_list)]
     size = len(combs)
     pBegin = 0
     pLast = pBegin
@@ -102,5 +102,10 @@ def combine_kline(kline_list):
                     pos_index = combs[pPrev].pos_begin if combs[pPrev].pos_begin == combs[pPrev].pos_end else combs[pPrev].pos_extreme
                     combs, pPrev = _handle_contained_k(combs, pLast, combs[pPrev].data.low, combs[pCur].data.high, pos_index, combs[pCur].pos_begin, pPrev, kline_list)
         pCur += 1
+    
+    # 按照新的排序对combs[:pLast + 1]的index属性进行重新赋值
+    sorted_combs = sorted(combs[:pLast + 1], key=lambda x: x.data.time)
+    for i, comb in enumerate(sorted_combs):
+        comb.index = i
 
     return combs[:pLast + 1]

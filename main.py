@@ -37,8 +37,10 @@ def load_data(file_path, tail_n=50):
 
 def df_to_kline_list(df):
     """将DataFrame转换为KLine对象列表（核心数据格式转换）"""
+    # 重置索引
+    df = df.reset_index(drop=True)
     kline_list = []
-    for _, row in df.iterrows():
+    for index, row in df.iterrows():
         kline = KLine(
             time=row['date'].timestamp(),  # 时间戳（便于后续计算）
             open=row['open'],
@@ -46,7 +48,8 @@ def df_to_kline_list(df):
             low=row['low'],
             close=row['close'],
             volume=row['volume'],
-            symbol="HS300"  # 标的名称（可根据数据修改）
+            symbol="HS300",  # 标的名称（可根据数据修改）
+            index=index
         )
         kline_list.append(kline)
     print(f"✅ 转换为{len(kline_list)}个KLine对象")
@@ -90,6 +93,13 @@ def main():
     combined_k_data = [comb.data for comb in combined_klines]  # 提取合并后的KLine对象
     print(f"✅ 合并前K线数量：{len(kline_list)}")
     print(f"✅ 合并后K线数量：{len(combined_k_data)}")
+
+    # 打印combined_klines
+    print("\n" + "=" * 50)
+    print("3. 打印combined_klines")
+    print("=" * 50)
+    for kline in combined_klines:
+        print(kline)
 
     # -------------------------- 4. 分型检测 --------------------------
     print("\n" + "=" * 50)

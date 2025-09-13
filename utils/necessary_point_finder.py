@@ -22,7 +22,7 @@ def _find_initial_points(combined_klines, top_fractals, bottom_fractals):
         return None
 
     # 验证分型间非共用K线
-    if abs(top_idx - bottom_idx) > 1:
+    if abs(potential_top.klines[1].index - potential_bottom.klines[1].index) > 3:
         return {"top_necessary": potential_top, "bottom_necessary": potential_bottom}
     else:
         print(f"[必经点查找] 警告：顶底分型间距不足（索引差={abs(top_idx - bottom_idx)}）")

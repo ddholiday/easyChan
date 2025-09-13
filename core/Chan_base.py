@@ -4,7 +4,7 @@ from datetime import datetime
 
 class KLine:
     """基础K线类：存储单根K线的时间、价格、成交量信息"""
-    def __init__(self, time=0, open=0, high=0, low=0, close=0, volume=0, symbol=""):
+    def __init__(self, time=0, open=0, high=0, low=0, close=0, volume=0, symbol="", index=0):
         self.time = time          # 时间戳（方便后续转换）
         self.open = open          # 开盘价
         self.high = high          # 最高价
@@ -12,20 +12,25 @@ class KLine:
         self.close = close        # 收盘价
         self.volume = volume      # 成交量
         self.symbol = symbol      # 标的代码（如HS300）
+        self.index = index        # K线序号
 
     def __repr__(self):
         time_str = datetime.fromtimestamp(self.time).strftime("%Y-%m-%d")
-        return f"KLine(time={time_str}, open={self.open:.2f}, high={self.high:.2f}, low={self.low:.2f}, close={self.close:.2f})"
+        return f"KLine(time={time_str}, open={self.open:.2f}, high={self.high:.2f}, low={self.low:.2f}, close={self.close:.2f}, index={self.index})"
 
 
 class stCombineK:
     """K线合并容器类：存储合并后的K线及位置信息"""
-    def __init__(self, data, begin, end, base, isup):
+    def __init__(self, data, begin, end, base, isup, index=0):
         self.data = data          # KLine对象（合并后的K线数据）
         self.pos_begin = begin    # 合并起始位置索引（原始K线）
         self.pos_end = end        # 合并结束位置索引（原始K线）
         self.pos_extreme = base   # 极值位置索引（高点/低点对应的原始K线）
         self.isUp = isup          # 趋势方向：True=向上，False=向下
+        self.index = index        # 合并K线序号
+    def __repr__(self):
+        time_str = datetime.fromtimestamp(self.data.time).strftime("%Y-%m-%d")
+        return f"stCombineK(time={time_str}, begin={self.pos_begin}, end={self.pos_end}, extreme={self.pos_extreme}, isUp={self.isUp}, index={self.index})"
 
 
 class Fractal:

@@ -10,5 +10,6 @@ __all__ = [
     "plot_kline",
     "mark_fractals",
     "draw_strokes",
-    "create_kline_figure"
+    "create_kline_figure",
+    "draw_buy_points"
 ]

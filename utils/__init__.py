@@ -3,7 +3,7 @@
 from .kline_combiner import combine_kline
 from .fractal_detector import detect_fractals
 from .necessary_point_finder import find_all_necessary_points, print_necessary_points
-from .stroke_identifier import identify_strokes, identify_strokes_from_necessary_points
+from .stroke_identifier import identify_strokes, identify_strokes_from_necessary_points, identify_strokes_from_pandas
 
 # 定义__all__：明确对外暴露的函数列表（规范导入）
 __all__ = [
@@ -13,4 +13,5 @@ __all__ = [
     "print_necessary_points", # 必经点打印（辅助）
     "identify_strokes",        # 笔识别
     "identify_strokes_from_necessary_points"  # 基于必经点的笔识别
+    "identify_strokes_from_pandas"
 ]

@@ -1,4 +1,3 @@
-# visualization/plot_utils.py
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from datetime import datetime
@@ -125,6 +124,76 @@ def draw_strokes(ax, strokes):
 
     # 添加笔的图例（若有笔则显示）
     ax.legend(loc='upper left', fontsize=10, framealpha=0.9)
+
+
+def draw_buy_points(ax, buy_points):
+    """
+    在K线图上标记1买点和2买点
+    
+    参数:
+    ax: 绘图坐标轴对象
+    buy_points: 符合条件的买点列表，每个买点包含1买点和2买点信息
+    """
+    if not buy_points:
+        return
+    
+    # 标记1买点：使用蓝色钻石形标记
+    for i, bp in enumerate(buy_points):
+        buy1 = bp['1_buy']
+        x = mdates.date2num(datetime.fromtimestamp(buy1['fractal'].time))
+        y = buy1['price']
+        
+        # 仅为第一个1买点添加图例标签
+        label = '1买点' if i == 0 else ""
+        ax.scatter(
+            x, y,
+            marker='D',        # 钻石形标记，区别于分型
+            color='blue',      # 蓝色表示买入信号
+            s=120,             # 稍大的标记尺寸，突出显示
+            zorder=6,          # 图层优先级最高，确保可见
+            edgecolors='black',# 黑色边框增加辨识度
+            linewidths=1,
+            label=label
+        )
+    
+    # 标记2买点：使用紫色圆形标记
+    for i, bp in enumerate(buy_points):
+        buy2 = bp['2_buy']
+        x = mdates.date2num(datetime.fromtimestamp(buy2['fractal'].time))
+        y = buy2['price']
+        
+        # 仅为第一个2买点添加图例标签
+        label = '2买点' if i == 0 else ""
+        ax.scatter(
+            x, y,
+            marker='o',        # 圆形标记，区别于1买点
+            color='purple',    # 紫色表示二次买入信号
+            s=120,             # 稍大的标记尺寸，突出显示
+            zorder=6,          # 图层优先级最高，确保可见
+            edgecolors='black',# 黑色边框增加辨识度
+            linewidths=1,
+            label=label
+        )
+    
+    # 连接同一组的1买点和2买点，显示其关系
+    for bp in buy_points:
+        buy1_x = mdates.date2num(datetime.fromtimestamp(bp['1_buy']['fractal'].time))
+        buy1_y = bp['1_buy']['price']
+        buy2_x = mdates.date2num(datetime.fromtimestamp(bp['2_buy']['fractal'].time))
+        buy2_y = bp['2_buy']['price']
+        
+        ax.plot(
+            [buy1_x, buy2_x],
+            [buy1_y, buy2_y],
+            color='gray',
+            linestyle='--',    # 虚线表示逻辑关系
+            linewidth=1.5,
+            zorder=3,          # 图层优先级低于买点标记
+            alpha=0.7
+        )
+    
+    # 添加买点图例
+    ax.legend(loc='lower right', fontsize=10, framealpha=0.9)
 
 
 def create_kline_figure(figsize=(14, 10)):

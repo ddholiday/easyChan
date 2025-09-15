@@ -1,6 +1,14 @@
 # utils/stroke_identifier.py
 from datetime import datetime
 from core.Chan_base import Stroke
+from utils import (
+    combine_kline,
+    detect_fractals,
+    find_all_necessary_points,
+    print_necessary_points
+)
+
+from core.Chan_base import KLine
 
 
 def _validate_stroke_conditions(start_point, end_point, combined_klines, last_direction):
@@ -290,3 +298,43 @@ def identify_strokes(combined_klines, necessary_points, top_fractals, bottom_fra
     
     print(f"[笔识别] 成功识别 {len(stroke_list)} 笔")
     return stroke_list
+
+def identify_strokes_from_pandas(df):
+    """
+    从Pandas DataFrame中识别笔
+    """
+    def df_to_kline_list(df):
+        """将DataFrame转换为KLine对象列表（核心数据格式转换）"""
+        # 重置索引
+        df = df.reset_index(drop=True)
+        kline_list = []
+        for index, row in df.iterrows():
+            kline = KLine(
+                time=row['date'].timestamp(),  # 时间戳（便于后续计算）
+                open=row['open'],
+                high=row['high'],
+                low=row['low'],
+                close=row['close'],
+                volume=row['volume'],
+                symbol="HS300",  # 标的名称（可根据数据修改）
+                index=index
+            )
+            kline_list.append(kline)
+        print(f"✅ 转换为{len(kline_list)}个KLine对象")
+        return kline_list
+    # 转换为KLine对象列表
+    kline_list = df_to_kline_list(df)
+
+    # 合并K线（根据实际情况调整参数）
+    combined_klines = combine_kline(kline_list)
+    
+    # 检测分型
+    top_fractals, bottom_fractals = detect_fractals(combined_klines)
+    
+    # 查找必经点
+    necessary_points = find_all_necessary_points(combined_klines, top_fractals, bottom_fractals)
+    
+    # 识别笔
+    stroke_list = identify_strokes(combined_klines, necessary_points, top_fractals, bottom_fractals)
+    
+    return stroke_list, kline_list, combined_klines, top_fractals, bottom_fractals

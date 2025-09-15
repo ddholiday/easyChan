@@ -37,7 +37,7 @@ def _recursive_front(segment, top_fractals, bottom_fractals, result_list, is_spl
         # 被顶分型分割：找段内最低底分型
         if not bottom_fractals:
             return
-        potential_bottom = min(bottom_fractals, key=lambda x: (x.price, -x.time))
+        potential_bottom = min(bottom_fractals, key=lambda x: x.price)
         segment_times = [k.data.time for k in segment]
 
         try:
@@ -61,7 +61,7 @@ def _recursive_front(segment, top_fractals, bottom_fractals, result_list, is_spl
         # 被底分型分割：找段内最高顶分型
         if not top_fractals:
             return
-        potential_top = max(top_fractals, key=lambda x: (-x.price, -x.time))
+        potential_top = max(top_fractals, key=lambda x: x.price)
         segment_times = [k.data.time for k in segment]
 
         try:

@@ -17,7 +17,10 @@ from visualization.plot_utils import (
     draw_strokes
 )
 import matplotlib.pyplot as plt
-
+import matplotlib
+# 设置中文字体和解决负号显示问题
+matplotlib.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'KaiTi', 'Arial Unicode MS']
+matplotlib.rcParams['axes.unicode_minus'] = False  # 解决负号 '-' 显示为方块的问题
 
 def load_data(file_path, tail_n=50):
     """读取CSV格式的K线数据，返回DataFrame"""

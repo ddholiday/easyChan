@@ -62,7 +62,6 @@ env.bak/
 venv.bak/
 
 # Data files
-*.csv
 *.dat
 *.db
 *.json

@@ -338,3 +338,21 @@ def identify_strokes_from_pandas(df):
     stroke_list = identify_strokes(combined_klines, necessary_points, top_fractals, bottom_fractals)
     
     return stroke_list, kline_list, combined_klines, top_fractals, bottom_fractals
+
+def identify_strokes_from_klines(kline_list):
+    """
+    从KLine对象列表中识别笔
+    """
+    # 合并K线（根据实际情况调整参数）
+    combined_klines = combine_kline(kline_list)
+    
+    # 检测分型
+    top_fractals, bottom_fractals = detect_fractals(combined_klines)
+    
+    # 查找必经点
+    necessary_points = find_all_necessary_points(combined_klines, top_fractals, bottom_fractals)
+    
+    # 识别笔
+    stroke_list = identify_strokes(combined_klines, necessary_points, top_fractals, bottom_fractals)
+    
+    return stroke_list, combined_klines, top_fractals, bottom_fractals

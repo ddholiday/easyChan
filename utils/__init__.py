@@ -13,5 +13,6 @@ __all__ = [
     "print_necessary_points", # 必经点打印（辅助）
     "identify_strokes",        # 笔识别
     "identify_strokes_from_necessary_points"  # 基于必经点的笔识别
-    "identify_strokes_from_pandas"
+    "identify_strokes_from_pandas",
+    "identify_strokes_from_klines"
 ]

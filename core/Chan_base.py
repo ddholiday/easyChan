@@ -31,23 +31,60 @@ class stCombineK:
     def __repr__(self):
         time_str = datetime.fromtimestamp(self.data.time).strftime("%Y-%m-%d")
         return f"stCombineK(time={time_str}, begin={self.pos_begin}, end={self.pos_end}, extreme={self.pos_extreme}, isUp={self.isUp}, index={self.index})"
+    @property
+    def high(self):
+        return self.data.high
+    @property
+    def low(self):
+        return self.data.low
+    @property
+    def close(self):
+        return self.data.close
+    @property
+    def open(self):
+        return self.data.open
+    @property
+    def volume(self):
+        return self.data.volume
 
 
 class Fractal:
     """分型基类：顶分型和底分型的父类，定义公共属性和接口"""
-    def __init__(self, klines):
-        if len(klines) < 3:
+    def __init__(self, combined_klines):
+        if len(combined_klines) < 3:
             raise ValueError("分型需至少3根K线")
-        self.klines = klines          # 构成分型的3根KLine对象列表
+        self.combined_klines = combined_klines          # 构成分型的3根KLine对象列表
         self.is_confirmed = False     # 是否被后续K线确认（外部逻辑更新）
 
     @property
     def time(self):
-        return self.klines[1].time    # 分型时间取中间K线时间
+        return self.combined_klines[1].data.time    # 分型时间取中间K线时间
 
     @property
     def fractal_type(self):
         raise NotImplementedError("子类必须实现fractal_type属性")
+    
+    @property
+    def end_index(self):
+        return self.combined_klines[-1].index
+    
+    @property
+    def start_index(self):
+        return self.combined_klines[0].index    
+    
+    @property
+    def end_point(self):
+        return self.combined_klines[-1]
+    @property
+    def start_point(self):
+        return self.combined_klines[0]     
+
+    @property
+    def high(self):
+        return self.combined_klines[1].high
+    @property
+    def low(self):
+        return self.combined_klines[1].low             
 
     def __repr__(self):
         time_str = datetime.fromtimestamp(self.time).strftime("%Y-%m-%d")
@@ -56,14 +93,14 @@ class Fractal:
 
 class TopFractal(Fractal):
     """顶分型：中间K线最高价 > 左右两侧K线最高价"""
-    def __init__(self, klines):
-        super().__init__(klines)
-        if not (klines[1].high > klines[0].high and klines[1].high > klines[2].high):
+    def __init__(self, combined_klines):
+        super().__init__(combined_klines)   
+        if not (combined_klines[1].high > combined_klines[0].high and combined_klines[1].high > combined_klines[2].high):
             raise ValueError("不符合顶分型条件：中间K线最高价需大于两侧")
 
     @property
     def price(self):
-        return self.klines[1].high    # 顶分型价格=中间K线最高价
+        return self.combined_klines[1].high    # 顶分型价格=中间K线最高价
 
     @property
     def fractal_type(self):
@@ -79,7 +116,7 @@ class BottomFractal(Fractal):
 
     @property
     def price(self):
-        return self.klines[1].low     # 底分型价格=中间K线最低价
+        return self.combined_klines[1].low     # 底分型价格=中间K线最低价               
 
     @property
     def fractal_type(self):
@@ -104,3 +141,18 @@ class Stroke:
         start_time = datetime.fromtimestamp(self.start_fractal.time).strftime("%Y-%m-%d")
         end_time = datetime.fromtimestamp(self.end_fractal.time).strftime("%Y-%m-%d")
         return f"<{status} {self.direction.upper()} Stroke | {start_time}~{end_time}"
+    
+    
+    @property
+    def end_index(self):
+        return self.end_fractal.end_index
+    @property
+    def start_index(self):
+        return self.start_fractal.start_index
+    
+    @property
+    def end_point(self):
+        return self.end_fractal.end_point
+    @property
+    def start_point(self):
+        return self.start_fractal.start_point

@@ -151,7 +151,7 @@ def identify_strokes_from_necessary_points(combined_klines, top_fractals, bottom
             return False  # 未找到对应的K线
         
         # 条件4: 非共用K线至少1根
-        if abs(f1.klines[1].index - f2.klines[1].index) <= 3:
+        if abs(f1.combined_klines[1].index - f2.combined_klines[1].index) <= 3:
             return False
         
         # 条件5: 价格约束检查

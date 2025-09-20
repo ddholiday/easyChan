@@ -195,7 +195,6 @@ def draw_buy_points(ax, buy_points):
     # 添加买点图例
     ax.legend(loc='lower right', fontsize=10, framealpha=0.9)
 
-
 def create_kline_figure(figsize=(14, 10)):
     """创建双轴K线图（原始K线+合并后K线，共享X轴）"""
     # 创建2行1列的子图，共享X轴（避免重复显示日期）

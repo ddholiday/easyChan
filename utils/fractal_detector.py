@@ -23,9 +23,9 @@ def detect_fractals(combined_klines):
 
     # 遍历合并K线（需至少3根K线构成分型）
     for i in range(1, len(combined_klines) - 1):
-        k0 = combined_klines[i-1].data  # 左侧K线
-        k1 = combined_klines[i].data    # 中间K线（分型核心）
-        k2 = combined_klines[i+1].data  # 右侧K线
+        k0 = combined_klines[i-1]  # 左侧K线
+        k1 = combined_klines[i]    # 中间K线（分型核心）
+        k2 = combined_klines[i+1]  # 右侧K线
 
         # 检测顶分型（中间K线最高价 > 两侧，且最低价 > 两侧，增强严格性）
         if (greater_than_0(k1.high - k0.high) and greater_than_0(k1.high - k2.high) and
@@ -45,3 +45,33 @@ def detect_fractals(combined_klines):
 
     print(f"[分型检测] 共识别到 {len(top_fractals)} 个顶分型，{len(bottom_fractals)} 个底分型")
     return top_fractals, bottom_fractals
+
+# 输入三根合并K线，判断是否为顶分型
+def is_top_fractal(k0, k1, k2):
+    """
+    判断三根合并K线是否为顶分型
+    
+    参数:
+        k0, k1, k2: 合并后的stCombineK对象
+    返回:
+        bool: 是否为顶分型
+    """
+    k0, k1, k2 = k0.data, k1.data, k2.data
+    # 检测顶分型（中间K线最高价 > 两侧，且最低价 > 两侧，增强严格性）
+    return (greater_than_0(k1.high - k0.high) and greater_than_0(k1.high - k2.high) and
+            greater_than_0(k1.low - k0.low) and greater_than_0(k1.low - k2.low))
+
+# 输入三根合并K线，判断是否为底分型
+def is_bottom_fractal(k0, k1, k2):
+    """
+    判断三根合并K线是否为底分型
+    
+    参数:
+        k0, k1, k2: 合并后的stCombineK对象
+    返回:
+        bool: 是否为底分型
+    """
+    k0, k1, k2 = k0.data, k1.data, k2.data
+    # 检测底分型（中间K线最低价 < 两侧，且最高价 < 两侧，增强严格性）
+    return (less_than_0(k1.low - k0.low) and less_than_0(k1.low - k2.low) and
+            less_than_0(k1.high - k0.high) and less_than_0(k1.high - k2.high))

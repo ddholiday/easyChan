@@ -6,6 +6,7 @@
 # 如何使用？
 
 git clone https://github.com/yourusername/easyChan.git
+
 cd easyChan
 python main.py
 

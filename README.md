@@ -8,6 +8,7 @@
 git clone https://github.com/yourusername/easyChan.git
 
 cd easyChan
+
 python main.py
 
 # 测试
